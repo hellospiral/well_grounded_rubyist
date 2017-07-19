@@ -55,3 +55,54 @@ rescue ArgumentError => e # assign exception object to variable
 end
 
 # 6.4.5 The ensure clause
+def line_from_file(filename, substring)
+  fh = File.open(filename)
+  begin
+    line = fh.gets
+    raise ArgumentError unless line.include?(substring)
+  rescue ArgumentError
+    puts "Invalid line!"
+    raise
+  ensure
+    fh.close #executed whether an exception is raised or not
+  end
+  return line
+end
+
+# 6.4.6 Creating your own exception classes
+class MyNewException < Exception
+end
+raise MyNewException, "some kind of error has occurred!"
+
+begin
+  puts "About to raise exception"
+  raise MyNewException
+rescue MyNewException => e
+  puts "Just raised an exception: #{e}"
+
+#Pinpointing the exception you want to intercept:
+class InvalidLineError < StandardError
+end
+
+def line_from_file(filename, substring)
+  fh = File.open(filename)
+  line = fh.gets
+  raise InvalidLineError unless line.include?(substring)
+  return line
+rescue InvalidLineError
+  puts "Invalid line!"
+  raise
+ensure
+  fh.close
+end
+
+#Namespaced exceptions:
+module TextHandler
+  class InvalidLineError < StandardError
+  end
+end
+def line_from_file(filename, substring)
+  fh = File.open(filename)
+  line = fh.gets
+  raise TextHandler::InvalidLineError unless line.include?(substring)
+end
