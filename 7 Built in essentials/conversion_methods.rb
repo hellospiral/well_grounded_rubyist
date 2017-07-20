@@ -31,3 +31,35 @@ puts n * 3 #=> '222'
 "1hello.42".to_f #=> 1.0
 '05xys'.to_f #=> 5.0
 '-5xys'.to_f #=> -5.0
+
+#Stricter conversions
+Integer("234") #=> 234
+Integer("123abc") #=> ArgumentError: invalid value for Integer(): "123abc"
+Float("3") #=> 3.0
+Float('-3xyz') #ArgumentError
+
+#7.4.4 Role-playing to_* methods
+class Person
+  attr_accessor :name
+  def to_str
+    name
+  end
+end
+matt = Person.new
+matt.name = "Matt"
+puts "Matt is named " + matt + "."
+
+#Array role-playing with to_ary
+class Person
+  attr_accessor :name, :age, :email
+  def to_ary
+    [name, age, email]
+  end
+end
+matt = Person.new
+matt.name = "Matt"
+matt.age = 34
+matt.email = "matt@exmpel.com"
+array = []
+array.concat(matt)
+array #=> ["Matt", 34, "matt@exmpel.com"]
